@@ -3,19 +3,34 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>HoldFast | Lavaside Studio</title>
-    <!-- Tailwind CSS CDN -->
+    <title>HOLDFAST | Lavaside Studio</title>
+    <meta name="description" content="HOLDFAST is a stealth colony-builder set in the Vertical Maw, a city that files the people it no longer needs as faults. Build a hidden colony, stay cold, and stay off the board.">
+    <meta property="og:title" content="HOLDFAST | Lavaside Studio">
+    <meta property="og:description" content="You've been filed. Build a hidden colony in the city's underbelly and stay cold enough that the machine never finds you.">
+    <meta property="og:image" content="The RIG Netrunner Chair.jpg">
+
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;800&family=JetBrains+Mono:wght@400;600&display=swap" rel="stylesheet">
+
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
         tailwind.config = {
             theme: {
                 extend: {
+                    fontFamily: {
+                        sans: ['Inter', 'system-ui', 'sans-serif'],
+                        mono: ['"JetBrains Mono"', 'ui-monospace', 'monospace']
+                    },
                     colors: {
                         brand: {
-                            dark: '#08080a',
-                            panel: '#101115',
-                            accent: '#e63946',
-                            muted: '#8e9aaf'
+                            dark: '#0c0a12',
+                            panel: '#130f1e',
+                            border: '#2a1f3d',
+                            accent: '#a855f7',
+                            muted: '#9ca3af',
+                            heat: '#f97316',
+                            cold: '#7dd3fc'
                         }
                     },
                     letterSpacing: {
@@ -27,219 +42,478 @@
         }
     </script>
     <style>
+        body { background-color: #0c0a12; color: #e5e7eb; }
+
         .scanlines {
-            background: linear-gradient(
-                to bottom,
-                rgba(255,255,255,0),
-                rgba(255,255,255,0) 50%,
-                rgba(0, 0, 0, 0.3) 50%,
-                rgba(0, 0, 0, 0.3)
-            );
+            background: linear-gradient(to bottom,
+                rgba(255,255,255,0), rgba(255,255,255,0) 50%,
+                rgba(12,10,18,0.4) 50%, rgba(12,10,18,0.4));
             background-size: 100% 4px;
+        }
+        .purple-glow { box-shadow: 0 0 30px -5px rgba(168, 85, 247, 0.15); }
+        .text-glow { text-shadow: 0 0 24px rgba(168, 85, 247, 0.55); }
+
+        /* Reveal on scroll */
+        .reveal { opacity: 0; transform: translateY(18px); transition: opacity 0.9s ease, transform 0.9s ease; }
+        .reveal.in { opacity: 1; transform: none; }
+
+        /* Typed cold-open lines */
+        .typed { border-right: 2px solid #a855f7; white-space: nowrap; overflow: hidden; }
+        .typed.done { border-right-color: transparent; }
+
+        /* Architect file meter */
+        .file-fill { transition: width 0.6s linear; }
+
+        /* Redacted act */
+        .redact { background: repeating-linear-gradient(90deg, #2a1f3d 0 10px, #1b1529 10px 12px); color: transparent; user-select: none; }
+
+        @media (prefers-reduced-motion: reduce) {
+            .reveal { opacity: 1; transform: none; transition: none; }
+            .animate-pulse { animation: none; }
         }
     </style>
 </head>
 <body class="bg-brand-dark text-gray-200 font-sans antialiased selection:bg-brand-accent selection:text-white overflow-x-hidden">
 
-    <!-- Ambient Particle Canvas -->
     <canvas id="ambient-canvas" class="fixed inset-0 pointer-events-none z-0 opacity-40"></canvas>
 
-    <!-- Navigation Bar -->
-    <nav class="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-brand-dark/70 border-b border-white/5 px-6 py-4 flex items-center justify-between">
+    <!-- NAV -->
+    <nav class="fixed top-0 left-0 w-full z-50 backdrop-blur-md bg-brand-dark/80 border-b border-brand-border px-6 py-4 flex items-center justify-between">
         <div class="flex items-center space-x-3">
             <span class="text-xl font-bold tracking-widest text-white uppercase">LAVASIDE</span>
-            <span class="text-xs text-brand-muted tracking-widest border-l border-white/20 pl-3">STUDIO</span>
+            <span class="text-xs text-brand-muted tracking-widest border-l border-brand-border pl-3">STUDIO</span>
         </div>
         <div class="hidden md:flex space-x-8 text-xs font-semibold tracking-cinematic text-gray-400 uppercase">
-            <a href="#holdfast" class="hover:text-white transition-colors">HoldFast</a>
-            <a href="#systems" class="hover:text-white transition-colors">Logistics</a>
-            <a href="#devlog" class="hover:text-white transition-colors">30-Day Crunch</a>
+            <a href="#maw" class="hover:text-brand-accent transition-colors">The Maw</a>
+            <a href="#survive" class="hover:text-brand-accent transition-colors">Survive</a>
+            <a href="#descent" class="hover:text-brand-accent transition-colors">The Descent</a>
+            <a href="#voices" class="hover:text-brand-accent transition-colors">Voices</a>
+            <a href="#devlog" class="hover:text-brand-accent transition-colors">Dev Log</a>
         </div>
-        <div>
-            <a href="#wishlist" class="text-xs font-bold tracking-widest uppercase px-4 py-2 bg-white/10 hover:bg-white text-white hover:text-black transition-all border border-white/20">
-                Wishlist
-            </a>
-        </div>
+        <a href="#wishlist" class="text-xs font-bold tracking-widest uppercase px-4 py-2 bg-brand-panel hover:bg-brand-accent text-white hover:text-black transition-all border border-brand-border">
+            Wishlist
+        </a>
     </nav>
 
-    <!-- HERO SECTION (Netrunner Rig Background) -->
-    <header class="relative w-full h-screen flex items-center justify-center overflow-hidden z-10">
-        
-        <!-- Background Image Backdrop -->
-        <div class="absolute inset-0 bg-cover bg-center z-0 opacity-40 transition-all duration-1000 scale-105 hover:scale-100" 
-             style="background-image: url('netrunner-rig.jpg');">
-        </div>
-        
-        <!-- Cinematic Scanline & Vignette Overlay -->
+    <!-- HERO -->
+    <header class="relative w-full min-h-screen flex items-center justify-center overflow-hidden z-10 pt-24 pb-16">
+        <div class="absolute inset-0 bg-cover bg-center z-0 opacity-45 transition-all duration-1000 scale-105 hover:scale-100"
+             style="background-image: url('The RIG Netrunner Chair.jpg');"></div>
         <div class="absolute inset-0 scanlines pointer-events-none z-0"></div>
-        <div class="absolute inset-0 bg-gradient-to-b from-brand-dark/80 via-brand-dark/40 to-brand-dark z-0"></div>
+        <div class="absolute inset-0 bg-gradient-to-b from-brand-dark/90 via-brand-dark/40 to-brand-dark z-0"></div>
 
-        <!-- Hero Content -->
         <div class="relative z-10 text-center px-6 max-w-4xl mx-auto space-y-6">
-            <p class="text-xs md:text-sm text-brand-muted tracking-widest uppercase">A Lavaside Studio Production</p>
+            <div class="inline-block px-3 py-1 bg-brand-panel/80 border border-brand-border text-[10px] font-mono tracking-widest text-brand-accent uppercase">
+                File opened // Unregistered load
+            </div>
+            <p class="text-xs md:text-sm text-brand-muted tracking-widest uppercase">A stealth colony-builder in a city that never stopped running</p>
             <h1 class="text-5xl md:text-8xl font-extrabold tracking-widest text-white uppercase leading-tight drop-shadow-2xl">
-                HOLD<span class="text-brand-accent">FAST</span>
+                HOLD<span class="text-brand-accent text-glow">FAST</span>
             </h1>
-            <p class="text-sm md:text-base text-gray-300 max-w-2xl mx-auto font-light leading-relaxed tracking-wide">
-                Master complex production chains, deploy automated nanobot networks, and survive cascading bottleneck crises in a cold, unrelenting wilderness.
+            <p class="text-sm md:text-lg text-gray-300 max-w-2xl mx-auto font-light leading-relaxed tracking-wide">
+                The Vertical Maw keeps perfect order. Anyone it no longer needs is filed as a fault, and faults get fixed.
+                <span class="text-white">You've been filed.</span>
+                Gather the ones it forgot, build a hidden colony in the city's underbelly, and stay cold enough that the machine never finds you.
             </p>
-            
-            <div class="pt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
-                <a href="#wishlist" class="w-full sm:w-auto px-8 py-3 bg-white text-black font-bold text-xs tracking-widest uppercase hover:bg-brand-accent hover:text-white transition-all shadow-lg shadow-white/5">
-                    Wishlist on Steam Soon
+
+            <!-- Live Architect file -->
+            <div class="max-w-md mx-auto bg-brand-panel/80 border border-brand-border p-4 text-left font-mono text-[11px] tracking-wider">
+                <div class="flex justify-between text-gray-500 mb-2">
+                    <span>THM // THERMAL</span>
+                    <span id="file-night">NIGHT 01</span>
+                </div>
+                <div class="h-2 bg-brand-dark border border-brand-border overflow-hidden">
+                    <div id="file-bar" class="file-fill h-full bg-gradient-to-r from-brand-accent to-brand-heat" style="width: 4%"></div>
+                </div>
+                <div class="flex justify-between mt-2">
+                    <span id="file-status" class="text-gray-400">LOGGING</span>
+                    <span id="file-pct" class="text-gray-400">4%</span>
+                </div>
+            </div>
+
+            <div class="pt-4 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#wishlist" class="w-full sm:w-auto px-8 py-3 bg-brand-accent text-black font-bold text-xs tracking-widest uppercase hover:bg-white transition-all shadow-lg shadow-purple-900/30">
+                    Wishlist on Steam
                 </a>
-                <a href="#holdfast" class="w-full sm:w-auto px-8 py-3 bg-transparent text-white border border-white/20 font-bold text-xs tracking-widest uppercase hover:bg-white/10 transition-all">
-                    Explore Core Systems
+                <a href="#maw" class="w-full sm:w-auto px-8 py-3 bg-brand-panel text-white border border-brand-border font-bold text-xs tracking-widest uppercase hover:bg-brand-border transition-all">
+                    Go Down
                 </a>
             </div>
         </div>
 
-        <!-- Scroll Down Cue -->
         <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center space-y-2 opacity-60 hover:opacity-100 transition-opacity">
-            <span class="text-[10px] tracking-widest uppercase text-gray-400">Scroll</span>
-            <div class="w-px h-8 bg-gradient-to-b from-white to-transparent animate-pulse"></div>
+            <span class="text-[10px] tracking-widest uppercase text-gray-400">Descend</span>
+            <div class="w-px h-8 bg-gradient-to-b from-brand-accent to-transparent animate-pulse"></div>
         </div>
     </header>
 
-    <!-- MAIN CONTENT CONTAINER -->
     <main class="relative z-10 max-w-6xl mx-auto px-6 space-y-32 py-20">
 
-        <!-- ABOUT / HOLDFAST CONCEPT SECTION -->
-        <section id="holdfast" class="space-y-8 border-l border-white/10 pl-6 md:pl-12">
-            <span class="text-xs font-mono text-brand-accent uppercase tracking-widest">// 01. Project Focus: HoldFast</span>
-            <h2 class="text-3xl md:text-5xl font-bold tracking-widest text-white uppercase">Automate. Interconnect. Survive.</h2>
-            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-400 font-light text-sm md:text-base leading-relaxed">
-                <p>
-                    In <strong class="text-white font-normal">HoldFast</strong>, survival isn't just about gathering stockpiles—it's about engineering resilient logistical networks. Every raw resource must be mined, routed, refined, and balanced against strict energy thresholds.
-                </p>
-                <p>
-                    Program autonomous nanobot gathering swarms to scour harsh frontiers while you diagnose and resolve single points of failure before a cascading bottleneck brings down your entire base infrastructure.
-                </p>
+        <!-- 01 THE MAW -->
+        <section id="maw" class="reveal grid grid-cols-1 md:grid-cols-5 gap-10 border-l border-brand-border pl-6 md:pl-12">
+            <div class="md:col-span-3 space-y-8">
+                <span class="text-xs font-mono text-brand-accent uppercase tracking-widest">// 01. The Vertical Maw</span>
+                <div class="space-y-2 font-mono text-lg md:text-2xl text-white">
+                    <p class="typed" data-text="Nobody walks the Glass Mile. It notices you."></p>
+                    <p class="typed text-brand-accent" data-text="Tonight it can. You're already on file."></p>
+                </div>
+                <div class="space-y-5 text-gray-300 font-light text-sm md:text-base leading-relaxed">
+                    <p>
+                        The Maw is a whole city, older than anyone's grandparents' grandparents. Its bright districts are spotless, lit like a casino, and almost empty.
+                        A mind called <strong class="text-white font-normal">the Architect</strong> runs every inch of it, and it runs it perfectly.
+                    </p>
+                    <p>
+                        Below the glass, the levels nobody maintains anymore are still full of people. To the city they're unregistered load.
+                        The drones that once fixed pipes now hunt faults. Erasure isn't cruelty here. It's maintenance.
+                    </p>
+                    <p>
+                        You were caught on the wrong street on the wrong night and routed down to intake. Now you're down here with them.
+                        What you build next decides whether anyone ever gets back off the board.
+                    </p>
+                </div>
             </div>
+
+            <!-- Architect log -->
+            <aside class="md:col-span-2 self-start bg-brand-panel border border-brand-border p-5 font-mono text-[11px] leading-6 purple-glow">
+                <div class="text-gray-500 mb-3 tracking-widest">ARCHITECT // LOG</div>
+                <p class="text-gray-400">CITIZEN NOTICE: NON-ESSENTIAL</p>
+                <p class="text-gray-400">REPORT TO INTAKE</p>
+                <p class="text-gray-400">ACCOUNT CLOSED. CHARGE WAIVED.</p>
+                <p class="text-gray-400">ENJOY YOUR ORDER.</p>
+                <p class="text-red-400 mt-3">UNACCEPTABLE.</p>
+                <p class="text-gray-300">ROUTED: INTAKE</p>
+                <p class="text-gray-500 mt-3">FAULT LOGGED: SUBLEVEL</p>
+                <p class="text-gray-500">STATUS: <span class="text-brand-accent">FILED</span><span class="animate-pulse">_</span></p>
+            </aside>
         </section>
 
-        <!-- CORE MECHANICS GRID -->
-        <section id="systems" class="space-y-12">
-            <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-white/10 pb-4">
+        <!-- 02 SURVIVE -->
+        <section id="survive" class="reveal space-y-12">
+            <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-brand-border pb-4">
                 <div>
-                    <span class="text-xs font-mono text-brand-accent uppercase tracking-widest">// 02. Core Systems</span>
-                    <h2 class="text-2xl md:text-4xl font-bold tracking-widest text-white uppercase mt-1">Engineered Mechanics</h2>
+                    <span class="text-xs font-mono text-brand-accent uppercase tracking-widest">// 02. How You Stay Alive</span>
+                    <h2 class="text-2xl md:text-4xl font-bold tracking-widest text-white uppercase mt-1">Keep It Cool</h2>
                 </div>
-                <p class="text-xs text-brand-muted tracking-wider uppercase mt-2 md:mt-0">Built for high-agency strategy players</p>
+                <p class="text-xs text-brand-muted tracking-wider uppercase mt-2 md:mt-0">Stealth. Survival. A colony worth hiding.</p>
             </div>
 
             <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
-                <!-- System Card 1 -->
-                <div class="bg-brand-panel border border-white/10 p-6 space-y-4 hover:border-white/30 transition-all group">
-                    <div class="text-xs font-mono text-gray-500 group-hover:text-brand-accent transition-colors">[ SYS_LOGISTICS ]</div>
-                    <h3 class="text-lg font-bold text-white tracking-wider uppercase">Logistical Interdependencies</h3>
-                    <p class="text-xs text-gray-400 leading-relaxed">
-                        Construct complex supply loops. Raw materials must be refined, routed, and transformed into precise component ratios to prevent output stalls.
+                <div class="bg-brand-panel border border-brand-border p-6 space-y-4 hover:border-brand-heat transition-all purple-glow group">
+                    <div class="text-xs font-mono text-gray-500 group-hover:text-brand-heat transition-colors">[ HEAT ]</div>
+                    <h3 class="text-lg font-bold text-white tracking-wider uppercase">Heat Is How It Finds You</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Every structure, every worker, every step forward runs warm. Heat is the city's oldest way of finding people.
+                        Cool the colony, spoof the readings, and learn to run silent. A colony that reaches zero heat becomes a <span class="text-brand-cold">GHOST</span>.
                     </p>
                 </div>
 
-                <!-- System Card 2 -->
-                <div class="bg-brand-panel border border-white/10 p-6 space-y-4 hover:border-white/30 transition-all group">
-                    <div class="text-xs font-mono text-gray-500 group-hover:text-brand-accent transition-colors">[ SYS_AUTOMATION ]</div>
-                    <h3 class="text-lg font-bold text-white tracking-wider uppercase">Nanobot Gathering Swarms</h3>
-                    <p class="text-xs text-gray-400 leading-relaxed">
-                        Unlock nanotech gathering routines. Program priority protocols to allow your autonomous fleet to dynamically adapt to severe environmental shifts.
+                <div class="bg-brand-panel border border-brand-border p-6 space-y-4 hover:border-brand-accent transition-all purple-glow group">
+                    <div class="text-xs font-mono text-gray-500 group-hover:text-brand-accent transition-colors">[ THE FILE ]</div>
+                    <h3 class="text-lg font-bold text-white tracking-wider uppercase">It Keeps a File on You</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Heat, noise, network traffic, sightings. The Architect pours all of it into files that fill through the night.
+                        Let one lock and the colony is erased. There is no alarm to warn you. You just watch the file climb.
                     </p>
                 </div>
 
-                <!-- System Card 3 -->
-                <div class="bg-brand-panel border border-white/10 p-6 space-y-4 hover:border-white/30 transition-all group">
-                    <div class="text-xs font-mono text-gray-500 group-hover:text-brand-accent transition-colors">[ SYS_BOTTLENECK ]</div>
-                    <h3 class="text-lg font-bold text-white tracking-wider uppercase">Bottleneck Resolution</h3>
-                    <p class="text-xs text-gray-400 leading-relaxed">
-                        Identify single points of failure in power, labor, or transport. Diagnose inefficiencies under pressure to maintain full operational throughput.
+                <div class="bg-brand-panel border border-brand-border p-6 space-y-4 hover:border-red-500 transition-all purple-glow group">
+                    <div class="text-xs font-mono text-gray-500 group-hover:text-red-400 transition-colors">[ DRONES ]</div>
+                    <h3 class="text-lg font-bold text-white tracking-wider uppercase">The City's Immune System</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        One follows heat. One listens. One stalks you through the shroud. One seals the sector behind you.
+                        Push into the dark with poor sight and a cone snaps onto you. Run. Hide in a grate. Hold your breath.
+                    </p>
+                </div>
+
+                <div class="bg-brand-panel border border-brand-border p-6 space-y-4 hover:border-brand-accent transition-all purple-glow group">
+                    <div class="text-xs font-mono text-gray-500 group-hover:text-brand-accent transition-colors">[ COLONY ]</div>
+                    <h3 class="text-lg font-bold text-white tracking-wider uppercase">Plant a Holdfast</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Root the colony, then grow it: survivors to feed and seat, structures to bond, research the colony earns by learning.
+                        Every new life makes you stronger, and makes you warmer. That's the whole tension.
+                    </p>
+                </div>
+
+                <div class="bg-brand-panel border border-brand-border p-6 space-y-4 hover:border-brand-cold transition-all purple-glow group">
+                    <div class="text-xs font-mono text-gray-500 group-hover:text-brand-cold transition-colors">[ GHOST LAYER ]</div>
+                    <h3 class="text-lg font-bold text-white tracking-wider uppercase">Jack Into the Rig</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Sit in the chair and drop into the city's own network. Pull stranded runners out under fire, crack the machine's files,
+                        and tune into signals nobody was meant to hear. The world above keeps moving while you're under.
+                    </p>
+                </div>
+
+                <div class="bg-brand-panel border border-brand-border p-6 space-y-4 hover:border-amber-400 transition-all purple-glow group">
+                    <div class="text-xs font-mono text-gray-500 group-hover:text-amber-400 transition-colors">[ GLYPHS ]</div>
+                    <h3 class="text-lg font-bold text-white tracking-wider uppercase">The City Is Written Down</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Under the machine's script runs a notation older than the machine. Read it. Use it. Travel by it.
+                        Nobody explains what it means. Your codex only records what you found.
                     </p>
                 </div>
             </div>
         </section>
 
-        <!-- DEVLOG / 30-DAY CRUNCH SECTION -->
-        <section id="devlog" class="space-y-8">
-            <div class="border-b border-white/10 pb-4">
-                <span class="text-xs font-mono text-brand-accent uppercase tracking-widest">// 03. Development Terminal</span>
-                <h2 class="text-2xl md:text-4xl font-bold tracking-widest text-white uppercase mt-1">30-Day Launch Countdown</h2>
+        <!-- 03 A NIGHT -->
+        <section class="reveal space-y-10">
+            <div class="border-b border-brand-border pb-4">
+                <span class="text-xs font-mono text-brand-accent uppercase tracking-widest">// 03. One Night in the Maw</span>
+                <h2 class="text-2xl md:text-4xl font-bold tracking-widest text-white uppercase mt-1">Then It Resyncs</h2>
+            </div>
+            <ol class="grid grid-cols-1 md:grid-cols-5 gap-4 font-mono text-xs">
+                <li class="bg-brand-panel border border-brand-border p-5 space-y-2">
+                    <div class="text-brand-accent">01 / SWEEP</div>
+                    <p class="text-gray-400 font-sans text-sm leading-relaxed">Clear the shroud tile by tile. Faults are buried in the floor. Step wrong and the file jumps.</p>
+                </li>
+                <li class="bg-brand-panel border border-brand-border p-5 space-y-2">
+                    <div class="text-brand-accent">02 / GATHER</div>
+                    <p class="text-gray-400 font-sans text-sm leading-relaxed">Grab it yourself: quick, hot, loud. Or lead a survivor out to work the site quietly.</p>
+                </li>
+                <li class="bg-brand-panel border border-brand-border p-5 space-y-2">
+                    <div class="text-brand-accent">03 / BUILD</div>
+                    <p class="text-gray-400 font-sans text-sm leading-relaxed">Raise structures around the Holdfast. Cool what you can. Pay for what you can't.</p>
+                </li>
+                <li class="bg-brand-panel border border-brand-border p-5 space-y-2">
+                    <div class="text-brand-accent">04 / HIDE</div>
+                    <p class="text-gray-400 font-sans text-sm leading-relaxed">Drones hold patrols until something catches their eye. Don't be the thing.</p>
+                </li>
+                <li class="bg-brand-panel border border-brand-border p-5 space-y-2">
+                    <div class="text-brand-cold">05 / RESYNC</div>
+                    <p class="text-gray-400 font-sans text-sm leading-relaxed">The city recounts itself. The sectors rearrange. If you held, the colony is remembered.</p>
+                </li>
+            </ol>
+        </section>
+
+        <!-- 04 DESCENT -->
+        <section id="descent" class="reveal space-y-10">
+            <div class="border-b border-brand-border pb-4">
+                <span class="text-xs font-mono text-brand-accent uppercase tracking-widest">// 04. The Descent</span>
+                <h2 class="text-2xl md:text-4xl font-bold tracking-widest text-white uppercase mt-1">Three Acts. Every Level Worse.</h2>
+                <p class="text-sm text-gray-400 mt-3 max-w-2xl">Each place is more hostile than the last. Each time, you arrive knowing more.</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <article class="bg-brand-panel border border-brand-border p-6 space-y-3">
+                    <div class="font-mono text-xs text-gray-500">ACT I</div>
+                    <h3 class="text-xl font-bold text-white tracking-wider uppercase">The Drowned Sewers</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Pipe banks, cable trays, cold city lamps and standing water. The underbelly of a city that forgot it had one.
+                        Root your first colony here. Something in the pipes is humming, and one survivor swears it's a sound worth following.
+                    </p>
+                </article>
+                <article class="bg-brand-panel border border-brand-border p-6 space-y-3">
+                    <div class="font-mono text-xs text-gray-500">ACT II</div>
+                    <h3 class="text-xl font-bold text-white tracking-wider uppercase">The Refinery Halls</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        The factory that feeds the city. Halls that rebuild themselves every night, a Churn that roars and then goes quiet,
+                        and a dead factory that's become a maze. Here the machine starts listening, and you learn to work the Ghost Layer for real.
+                    </p>
+                </article>
+                <article class="bg-brand-panel border border-brand-border p-6 space-y-3 relative overflow-hidden">
+                    <div class="font-mono text-xs text-gray-500">ACT III</div>
+                    <h3 class="text-xl font-bold tracking-wider uppercase"><span class="redact px-1">THE CLASSIFIED</span></h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        <span class="font-mono text-red-400 text-xs block mb-2">CLEARANCE REQUIRED</span>
+                        Further up than anyone from below has ever been. Warmer. Quieter. Watched.
+                        The colony has to earn every step of the way there.
+                    </p>
+                </article>
+            </div>
+        </section>
+
+        <!-- 05 VOICES -->
+        <section id="voices" class="reveal space-y-10">
+            <div class="border-b border-brand-border pb-4">
+                <span class="text-xs font-mono text-brand-accent uppercase tracking-widest">// 05. Voices in the Dark</span>
+                <h2 class="text-2xl md:text-4xl font-bold tracking-widest text-white uppercase mt-1">Nobody Survives Alone</h2>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="bg-brand-panel border border-brand-border p-6 space-y-3 hover:border-teal-400 transition-all">
+                    <div class="font-mono text-[10px] text-teal-400 tracking-widest">WATER CREW // FORMER</div>
+                    <h3 class="text-2xl font-bold text-white tracking-widest uppercase">Mira</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Six years on a water crew until her route was automated. Her crew went up. She went down, following a sound nobody else could hear.
+                        The first to listen. The reason anyone hopes.
+                    </p>
+                </div>
+                <div class="bg-brand-panel border border-brand-border p-6 space-y-3 hover:border-red-400 transition-all">
+                    <div class="font-mono text-[10px] text-red-400 tracking-widest">NETRUNNER</div>
+                    <h3 class="text-2xl font-bold text-white tracking-widest uppercase">Drex</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Quiet, bold, and burned by the hardest leg of netrunning. He'll teach you to fight in the Ghost Layer.
+                        He carries an old file and won't say who signed it.
+                    </p>
+                </div>
+                <div class="bg-brand-panel border border-brand-border p-6 space-y-3 hover:border-pink-400 transition-all">
+                    <div class="font-mono text-[10px] text-pink-400 tracking-widest">FIELD GUIDE</div>
+                    <h3 class="text-2xl font-bold text-white tracking-widest uppercase">Rei</h3>
+                    <p class="text-sm text-gray-400 leading-relaxed">
+                        Bright, kind, and completely in your corner. She writes the Field Guide and believes you'll make it, even on the bad nights.
+                        She's been around a lot longer than she lets on.
+                    </p>
+                </div>
+                <div class="border border-dashed border-brand-border p-6 space-y-3 flex flex-col justify-center">
+                    <div class="font-mono text-[10px] text-gray-500 tracking-widest">SIGNAL // UNRESOLVED</div>
+                    <h3 class="text-2xl font-bold text-gray-600 tracking-widest uppercase">More</h3>
+                    <p class="text-sm text-gray-500 leading-relaxed">
+                        A porter with a story for every tunnel. A woman who knows the machine's rules better than it does.
+                        Others are still waiting, deeper in.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- 06 WHY -->
+        <section class="reveal grid grid-cols-1 md:grid-cols-2 gap-10 items-center">
+            <div class="space-y-6">
+                <span class="text-xs font-mono text-brand-accent uppercase tracking-widest">// 06. Why Go Down</span>
+                <h2 class="text-3xl md:text-5xl font-bold tracking-widest text-white uppercase leading-tight">Be the Ghost<br>in the Machine.</h2>
+                <p class="text-gray-300 font-light leading-relaxed">
+                    For fans of Frostpunk's hard choices, Invisible Inc. and Mark of the Ninja's stealth, and the slow dread of Alien: Isolation.
+                    HOLDFAST is a colony you love and a city you can't outrun, and every night you have to decide how much warmth you can afford.
+                </p>
+            </div>
+            <ul class="space-y-4 font-mono text-sm">
+                <li class="flex gap-4 bg-brand-panel border border-brand-border p-4"><span class="text-brand-accent">&gt;</span><span>A city that rebuilds its halls every night. No two runs walk the same.</span></li>
+                <li class="flex gap-4 bg-brand-panel border border-brand-border p-4"><span class="text-brand-accent">&gt;</span><span>Stealth that rewards nerve. If you can pull off the exploit, the game lets you.</span></li>
+                <li class="flex gap-4 bg-brand-panel border border-brand-border p-4"><span class="text-brand-accent">&gt;</span><span>A mystery you solve yourself. Nothing is explained. Everything is written down somewhere.</span></li>
+                <li class="flex gap-4 bg-brand-panel border border-brand-border p-4"><span class="text-brand-accent">&gt;</span><span>Five endings. Not every victory is the one you think it is.</span></li>
+            </ul>
+        </section>
+
+        <!-- 07 DEVLOG -->
+        <section id="devlog" class="reveal space-y-8">
+            <div class="border-b border-brand-border pb-4">
+                <span class="text-xs font-mono text-brand-accent uppercase tracking-widest">// 07. Development Terminal</span>
+                <h2 class="text-2xl md:text-4xl font-bold tracking-widest text-white uppercase mt-1">Built by One Runner</h2>
+                <p class="text-sm text-gray-400 mt-3 max-w-2xl">HOLDFAST is made by a solo developer at Lavaside Studio, headed for Steam on PC.</p>
             </div>
 
             <div class="space-y-4 font-mono text-xs">
-                <!-- Log Entry 1 -->
                 <div class="bg-brand-panel p-4 border-l-2 border-brand-accent flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
-                    <div>
-                        <span class="text-gray-500 mr-4">[ PHASE_FINAL_30 ]</span>
-                        <span class="text-white font-semibold">Entering Final Development & Polish Cycle</span>
-                    </div>
-                    <span class="text-gray-400">Locking core gameplay loops, balancing logistics, preparing Steam build.</span>
+                    <div><span class="text-gray-500 mr-4">[ ACT_III ]</span><span class="text-white font-semibold">The final act is in development</span></div>
+                    <span class="text-gray-400">New districts, new threats, and the finale the whole game builds toward.</span>
                 </div>
-
-                <!-- Log Entry 2 -->
-                <div class="bg-brand-panel p-4 border-l-2 border-white/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
-                    <div>
-                        <span class="text-gray-500 mr-4">[ SYS_UPDATE ]</span>
-                        <span class="text-white font-semibold">Nanobot Routing Engine Refactor Complete</span>
-                    </div>
-                    <span class="text-gray-400">Optimized dynamic pathfinding calculations for massive automated swarms.</span>
+                <div class="bg-brand-panel p-4 border-l-2 border-brand-border flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                    <div><span class="text-gray-500 mr-4">[ GHOST_LAYER ]</span><span class="text-white font-semibold">Runner Hunt and the White Hack are live</span></div>
+                    <span class="text-gray-400">Run-and-gun extractions and one-on-one file breaks, with a rig you upgrade.</span>
+                </div>
+                <div class="bg-brand-panel p-4 border-l-2 border-brand-border flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                    <div><span class="text-gray-500 mr-4">[ ACT_II ]</span><span class="text-white font-semibold">The refinery halls rebuild every night</span></div>
+                    <span class="text-gray-400">Sector regeneration across the factory, including a dead factory maze.</span>
+                </div>
+                <div class="bg-brand-panel p-4 border-l-2 border-brand-border flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                    <div><span class="text-gray-500 mr-4">[ ACT_I ]</span><span class="text-white font-semibold">The Drowned Sewers are complete</span></div>
+                    <span class="text-gray-400">First colony, first drones, first sound in the pipes.</span>
                 </div>
             </div>
         </section>
 
     </main>
 
-    <!-- FOOTER -->
-    <footer id="wishlist" class="relative z-10 border-t border-white/10 bg-brand-panel py-12 px-6 mt-32">
-        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+    <!-- FOOTER / CTA -->
+    <footer id="wishlist" class="relative z-10 border-t border-brand-border bg-brand-panel py-20 px-6 mt-32">
+        <div class="max-w-3xl mx-auto text-center space-y-6 mb-16">
+            <p class="font-mono text-xs text-brand-accent tracking-widest uppercase">// Stay off the board</p>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-widest text-white uppercase">Wishlist HOLDFAST</h2>
+            <p class="text-gray-400 font-light">Coming to Steam. Wishlist to hear the moment the doors open, and follow the build on Discord.</p>
+            <div class="flex flex-col sm:flex-row items-center justify-center gap-4 pt-2">
+                <a href="#" class="w-full sm:w-auto px-8 py-3 bg-brand-accent text-black font-bold text-xs tracking-widest uppercase hover:bg-white transition-all shadow-lg shadow-purple-900/30">Wishlist on Steam</a>
+                <a href="#" class="w-full sm:w-auto px-8 py-3 bg-brand-dark text-white border border-brand-border font-bold text-xs tracking-widest uppercase hover:bg-brand-border transition-all">Join the Discord</a>
+            </div>
+            <p class="font-mono text-xs text-gray-500 pt-4">Good air, runner.</p>
+        </div>
+
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left border-t border-brand-border pt-8">
             <div>
                 <h3 class="text-lg font-bold tracking-widest text-white uppercase">LAVASIDE STUDIO</h3>
-                <p class="text-xs text-gray-500 mt-1">Developing <em>HoldFast</em>. Direct inquiries: contact your personal email.</p>
+                <p class="text-xs text-gray-400 mt-1">Developing <em>HOLDFAST</em>. All rights reserved.</p>
             </div>
-            
             <div class="flex space-x-6 text-xs text-gray-400 font-mono">
-                <a href="#" class="hover:text-white transition-colors">STEAM</a>
-                <a href="#" class="hover:text-white transition-colors">DISCORD</a>
-                <a href="#" class="hover:text-white transition-colors">GITHUB</a>
+                <a href="#" class="hover:text-brand-accent transition-colors">STEAM</a>
+                <a href="#" class="hover:text-brand-accent transition-colors">DISCORD</a>
+                <a href="#" class="hover:text-brand-accent transition-colors">GITHUB</a>
             </div>
         </div>
     </footer>
 
-    <!-- Background Particle Script -->
     <script>
+        const reduceMotion = window.matchMedia('(prefers-reduced-motion: reduce)').matches;
+
+        /* Ambient embers */
         const canvas = document.getElementById('ambient-canvas');
         const ctx = canvas.getContext('2d');
-
-        function resizeCanvas() {
-            canvas.width = window.innerWidth;
-            canvas.height = window.innerHeight;
-        }
+        function resizeCanvas() { canvas.width = window.innerWidth; canvas.height = window.innerHeight; }
         resizeCanvas();
         window.addEventListener('resize', resizeCanvas);
-
-        const particles = Array.from({ length: 40 }, () => ({
+        const particles = Array.from({ length: 45 }, () => ({
             x: Math.random() * canvas.width,
             y: Math.random() * canvas.height,
             size: Math.random() * 1.5 + 0.5,
-            speedY: - (Math.random() * 0.3 + 0.1),
+            speedY: -(Math.random() * 0.3 + 0.1),
             opacity: Math.random() * 0.5 + 0.2
         }));
-
         function animate() {
             ctx.clearRect(0, 0, canvas.width, canvas.height);
-            
             particles.forEach(p => {
                 p.y += p.speedY;
-                if (p.y < 0) {
-                    p.y = canvas.height;
-                    p.x = Math.random() * canvas.width;
-                }
-                ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
+                if (p.y < 0) { p.y = canvas.height; p.x = Math.random() * canvas.width; }
+                ctx.fillStyle = `rgba(168, 85, 247, ${p.opacity})`;
                 ctx.fillRect(p.x, p.y, p.size, p.size);
             });
-
             requestAnimationFrame(animate);
         }
-        animate();
+        if (!reduceMotion) animate();
+
+        /* Architect file: fills through the night, resyncs */
+        const bar = document.getElementById('file-bar');
+        const pct = document.getElementById('file-pct');
+        const status = document.getElementById('file-status');
+        const nightEl = document.getElementById('file-night');
+        let fill = 4, night = 1;
+        setInterval(() => {
+            fill += Math.random() * 3.2;
+            if (fill >= 92) {
+                status.textContent = 'RESYNC // COLONY REMEMBERED';
+                status.className = 'text-brand-cold';
+                fill = 4; night++;
+                nightEl.textContent = 'NIGHT ' + String(night).padStart(2, '0');
+                setTimeout(() => { status.textContent = 'LOGGING'; status.className = 'text-gray-400'; }, 2200);
+            } else if (fill > 70) {
+                status.textContent = 'NEAR LOCK';
+                status.className = 'text-brand-heat';
+            }
+            bar.style.width = fill.toFixed(0) + '%';
+            pct.textContent = fill.toFixed(0) + '%';
+        }, 900);
+
+        /* Typed cold open */
+        function typeLine(el, done) {
+            const text = el.dataset.text;
+            if (reduceMotion) { el.textContent = text; el.classList.add('done'); done && done(); return; }
+            let i = 0;
+            const t = setInterval(() => {
+                el.textContent = text.slice(0, ++i);
+                if (i >= text.length) { clearInterval(t); el.classList.add('done'); done && setTimeout(done, 500); }
+            }, 42);
+        }
+        const typed = [...document.querySelectorAll('.typed')];
+        let typedStarted = false;
+
+        /* Reveal on scroll */
+        const io = new IntersectionObserver(entries => {
+            entries.forEach(e => {
+                if (!e.isIntersecting) return;
+                e.target.classList.add('in');
+                if (e.target.id === 'maw' && !typedStarted) {
+                    typedStarted = true;
+                    typeLine(typed[0], () => typeLine(typed[1]));
+                }
+                io.unobserve(e.target);
+            });
+        }, { threshold: 0.2 });
+        document.querySelectorAll('.reveal').forEach(el => io.observe(el));
     </script>
 </body>
 </html>
