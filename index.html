@@ -3,7 +3,7 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Survival Colony Simulation | Lavaside Studio</title>
+    <title>HoldFast | Lavaside Studio</title>
     <!-- Tailwind CSS CDN -->
     <script src="https://cdn.tailwindcss.com"></script>
     <script>
@@ -27,7 +27,6 @@
         }
     </script>
     <style>
-        /* Custom subtle scanline & glassmorphism overlays */
         .scanlines {
             background: linear-gradient(
                 to bottom,
@@ -52,9 +51,9 @@
             <span class="text-xs text-brand-muted tracking-widest border-l border-white/20 pl-3">STUDIO</span>
         </div>
         <div class="hidden md:flex space-x-8 text-xs font-semibold tracking-cinematic text-gray-400 uppercase">
-            <a href="#about" class="hover:text-white transition-colors">Overview</a>
+            <a href="#holdfast" class="hover:text-white transition-colors">HoldFast</a>
             <a href="#systems" class="hover:text-white transition-colors">Logistics</a>
-            <a href="#devlog" class="hover:text-white transition-colors">Updates</a>
+            <a href="#devlog" class="hover:text-white transition-colors">30-Day Crunch</a>
         </div>
         <div>
             <a href="#wishlist" class="text-xs font-bold tracking-widest uppercase px-4 py-2 bg-white/10 hover:bg-white text-white hover:text-black transition-all border border-white/20">
@@ -66,16 +65,181 @@
     <!-- HERO SECTION (Netrunner Rig Background) -->
     <header class="relative w-full h-screen flex items-center justify-center overflow-hidden z-10">
         
-        <!-- Netrunner Rig Chair Image Backdrop -->
+        <!-- Background Image Backdrop -->
         <div class="absolute inset-0 bg-cover bg-center z-0 opacity-40 transition-all duration-1000 scale-105 hover:scale-100" 
-             style="background-image: url('The RIG Netrunner Chair.jpg');">
+             style="background-image: url('netrunner-rig.jpg');">
         </div>
         
-        <!-- Cinematic Scanline Overlay & Vignette Gradient -->
+        <!-- Cinematic Scanline & Vignette Overlay -->
         <div class="absolute inset-0 scanlines pointer-events-none z-0"></div>
         <div class="absolute inset-0 bg-gradient-to-b from-brand-dark/80 via-brand-dark/40 to-brand-dark z-0"></div>
 
         <!-- Hero Content -->
         <div class="relative z-10 text-center px-6 max-w-4xl mx-auto space-y-6">
-            <p class="text-xs md:text-sm text-brand-muted tracking-widest uppercase">A Colony Logistics &amp; Automation Simulator</p>
-            <h1 class="text-4xl md:text-7xl font-extrabold tracking-widest text-white uppercase leading
+            <p class="text-xs md:text-sm text-brand-muted tracking-widest uppercase">A Lavaside Studio Production</p>
+            <h1 class="text-5xl md:text-8xl font-extrabold tracking-widest text-white uppercase leading-tight drop-shadow-2xl">
+                HOLD<span class="text-brand-accent">FAST</span>
+            </h1>
+            <p class="text-sm md:text-base text-gray-300 max-w-2xl mx-auto font-light leading-relaxed tracking-wide">
+                Master complex production chains, deploy automated nanobot networks, and survive cascading bottleneck crises in a cold, unrelenting wilderness.
+            </p>
+            
+            <div class="pt-6 flex flex-col sm:flex-row items-center justify-center gap-4">
+                <a href="#wishlist" class="w-full sm:w-auto px-8 py-3 bg-white text-black font-bold text-xs tracking-widest uppercase hover:bg-brand-accent hover:text-white transition-all shadow-lg shadow-white/5">
+                    Wishlist on Steam Soon
+                </a>
+                <a href="#holdfast" class="w-full sm:w-auto px-8 py-3 bg-transparent text-white border border-white/20 font-bold text-xs tracking-widest uppercase hover:bg-white/10 transition-all">
+                    Explore Core Systems
+                </a>
+            </div>
+        </div>
+
+        <!-- Scroll Down Cue -->
+        <div class="absolute bottom-8 left-1/2 -translate-x-1/2 z-10 flex flex-col items-center space-y-2 opacity-60 hover:opacity-100 transition-opacity">
+            <span class="text-[10px] tracking-widest uppercase text-gray-400">Scroll</span>
+            <div class="w-px h-8 bg-gradient-to-b from-white to-transparent animate-pulse"></div>
+        </div>
+    </header>
+
+    <!-- MAIN CONTENT CONTAINER -->
+    <main class="relative z-10 max-w-6xl mx-auto px-6 space-y-32 py-20">
+
+        <!-- ABOUT / HOLDFAST CONCEPT SECTION -->
+        <section id="holdfast" class="space-y-8 border-l border-white/10 pl-6 md:pl-12">
+            <span class="text-xs font-mono text-brand-accent uppercase tracking-widest">// 01. Project Focus: HoldFast</span>
+            <h2 class="text-3xl md:text-5xl font-bold tracking-widest text-white uppercase">Automate. Interconnect. Survive.</h2>
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8 text-gray-400 font-light text-sm md:text-base leading-relaxed">
+                <p>
+                    In <strong class="text-white font-normal">HoldFast</strong>, survival isn't just about gathering stockpiles—it's about engineering resilient logistical networks. Every raw resource must be mined, routed, refined, and balanced against strict energy thresholds.
+                </p>
+                <p>
+                    Program autonomous nanobot gathering swarms to scour harsh frontiers while you diagnose and resolve single points of failure before a cascading bottleneck brings down your entire base infrastructure.
+                </p>
+            </div>
+        </section>
+
+        <!-- CORE MECHANICS GRID -->
+        <section id="systems" class="space-y-12">
+            <div class="flex flex-col md:flex-row md:items-end justify-between border-b border-white/10 pb-4">
+                <div>
+                    <span class="text-xs font-mono text-brand-accent uppercase tracking-widest">// 02. Core Systems</span>
+                    <h2 class="text-2xl md:text-4xl font-bold tracking-widest text-white uppercase mt-1">Engineered Mechanics</h2>
+                </div>
+                <p class="text-xs text-brand-muted tracking-wider uppercase mt-2 md:mt-0">Built for high-agency strategy players</p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-3 gap-6">
+                <!-- System Card 1 -->
+                <div class="bg-brand-panel border border-white/10 p-6 space-y-4 hover:border-white/30 transition-all group">
+                    <div class="text-xs font-mono text-gray-500 group-hover:text-brand-accent transition-colors">[ SYS_LOGISTICS ]</div>
+                    <h3 class="text-lg font-bold text-white tracking-wider uppercase">Logistical Interdependencies</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Construct complex supply loops. Raw materials must be refined, routed, and transformed into precise component ratios to prevent output stalls.
+                    </p>
+                </div>
+
+                <!-- System Card 2 -->
+                <div class="bg-brand-panel border border-white/10 p-6 space-y-4 hover:border-white/30 transition-all group">
+                    <div class="text-xs font-mono text-gray-500 group-hover:text-brand-accent transition-colors">[ SYS_AUTOMATION ]</div>
+                    <h3 class="text-lg font-bold text-white tracking-wider uppercase">Nanobot Gathering Swarms</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Unlock nanotech gathering routines. Program priority protocols to allow your autonomous fleet to dynamically adapt to severe environmental shifts.
+                    </p>
+                </div>
+
+                <!-- System Card 3 -->
+                <div class="bg-brand-panel border border-white/10 p-6 space-y-4 hover:border-white/30 transition-all group">
+                    <div class="text-xs font-mono text-gray-500 group-hover:text-brand-accent transition-colors">[ SYS_BOTTLENECK ]</div>
+                    <h3 class="text-lg font-bold text-white tracking-wider uppercase">Bottleneck Resolution</h3>
+                    <p class="text-xs text-gray-400 leading-relaxed">
+                        Identify single points of failure in power, labor, or transport. Diagnose inefficiencies under pressure to maintain full operational throughput.
+                    </p>
+                </div>
+            </div>
+        </section>
+
+        <!-- DEVLOG / 30-DAY CRUNCH SECTION -->
+        <section id="devlog" class="space-y-8">
+            <div class="border-b border-white/10 pb-4">
+                <span class="text-xs font-mono text-brand-accent uppercase tracking-widest">// 03. Development Terminal</span>
+                <h2 class="text-2xl md:text-4xl font-bold tracking-widest text-white uppercase mt-1">30-Day Launch Countdown</h2>
+            </div>
+
+            <div class="space-y-4 font-mono text-xs">
+                <!-- Log Entry 1 -->
+                <div class="bg-brand-panel p-4 border-l-2 border-brand-accent flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                    <div>
+                        <span class="text-gray-500 mr-4">[ PHASE_FINAL_30 ]</span>
+                        <span class="text-white font-semibold">Entering Final Development & Polish Cycle</span>
+                    </div>
+                    <span class="text-gray-400">Locking core gameplay loops, balancing logistics, preparing Steam build.</span>
+                </div>
+
+                <!-- Log Entry 2 -->
+                <div class="bg-brand-panel p-4 border-l-2 border-white/20 flex flex-col md:flex-row justify-between items-start md:items-center gap-2">
+                    <div>
+                        <span class="text-gray-500 mr-4">[ SYS_UPDATE ]</span>
+                        <span class="text-white font-semibold">Nanobot Routing Engine Refactor Complete</span>
+                    </div>
+                    <span class="text-gray-400">Optimized dynamic pathfinding calculations for massive automated swarms.</span>
+                </div>
+            </div>
+        </section>
+
+    </main>
+
+    <!-- FOOTER -->
+    <footer id="wishlist" class="relative z-10 border-t border-white/10 bg-brand-panel py-12 px-6 mt-32">
+        <div class="max-w-6xl mx-auto flex flex-col md:flex-row items-center justify-between gap-6 text-center md:text-left">
+            <div>
+                <h3 class="text-lg font-bold tracking-widest text-white uppercase">LAVASIDE STUDIO</h3>
+                <p class="text-xs text-gray-500 mt-1">Developing <em>HoldFast</em>. Direct inquiries: contact your personal email.</p>
+            </div>
+            
+            <div class="flex space-x-6 text-xs text-gray-400 font-mono">
+                <a href="#" class="hover:text-white transition-colors">STEAM</a>
+                <a href="#" class="hover:text-white transition-colors">DISCORD</a>
+                <a href="#" class="hover:text-white transition-colors">GITHUB</a>
+            </div>
+        </div>
+    </footer>
+
+    <!-- Background Particle Script -->
+    <script>
+        const canvas = document.getElementById('ambient-canvas');
+        const ctx = canvas.getContext('2d');
+
+        function resizeCanvas() {
+            canvas.width = window.innerWidth;
+            canvas.height = window.innerHeight;
+        }
+        resizeCanvas();
+        window.addEventListener('resize', resizeCanvas);
+
+        const particles = Array.from({ length: 40 }, () => ({
+            x: Math.random() * canvas.width,
+            y: Math.random() * canvas.height,
+            size: Math.random() * 1.5 + 0.5,
+            speedY: - (Math.random() * 0.3 + 0.1),
+            opacity: Math.random() * 0.5 + 0.2
+        }));
+
+        function animate() {
+            ctx.clearRect(0, 0, canvas.width, canvas.height);
+            
+            particles.forEach(p => {
+                p.y += p.speedY;
+                if (p.y < 0) {
+                    p.y = canvas.height;
+                    p.x = Math.random() * canvas.width;
+                }
+                ctx.fillStyle = `rgba(255, 255, 255, ${p.opacity})`;
+                ctx.fillRect(p.x, p.y, p.size, p.size);
+            });
+
+            requestAnimationFrame(animate);
+        }
+        animate();
+    </script>
+</body>
+</html>
